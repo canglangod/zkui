@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>ZKUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" th:href="@{/static/layui/css/layui.css}">
+<script th:src="@{/static/layui/layui.js}"></script>
+</head>
+<body style="background-color: #F2F2F2;">
+	<div id="exportHtml" style="padding: 20px;">
+		<div class="layui-row layui-col-space15">
+			<div class="layui-col-md12">
+				<div class="layui-card">
+					<div class="layui-card-body layui-card-body-max">
+						<form class="layui-form layui-form-pane" lay-filter="node" action="">
+							<div class="layui-form-item">
+								<label class="layui-form-label">导出节点</label>
+								<div class="layui-input-block">
+									<input type="text" name="superiorPath" lay-verify="superiorPath" autocomplete="off" class="layui-input layui-disabled" disabled />
+								</div>
+							</div>
+							<div class="layui-form-item layui-form-text">
+								<label class="layui-form-label">节点</label>
+								<div class="layui-input-block">
+									<textarea name="node" class="layui-textarea" style="height: 140px"></textarea>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script th:inline="javascript">
+		layui.use([ 'form', ], function() {
+			var form = layui.form;
+			var path = [[${path}]];
+			
+			var index = layer.load(2);
+			window.parent.socket_export(path);
+			window.serFromVal = function(path, node) {
+				form.val('node', {
+					'superiorPath' : path,
+					'node' : JSON.stringify(node)
+				});
+				layer.close(index);
+			}
+		});
+	</script>
+</body>

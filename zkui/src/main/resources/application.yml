@@ -1,0 +1,13 @@
+server:
+   port: 8089
+   servlet:
+      context-path: /zkui
+spring:
+   thymeleaf:
+      prefix: classpath:/templates/ 
+      check-template-location: true
+      suffix: .html
+      encoding: UTF-8
+      content-type: text/html
+      mode: HTML5
+      cache: false
