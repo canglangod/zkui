@@ -38,11 +38,14 @@
 			var path = [[${path}]];
 			
 			window.parent.socket_export(path);
+			var index = layer.load(2);
+			
 			window.serFromVal = function(path, node) {
 				form.val('node', {
 					'superiorPath' : path,
 					'node' : JSON.stringify(node)
 				});
+				layer.close(index);
 			}
 		});
 	</script>

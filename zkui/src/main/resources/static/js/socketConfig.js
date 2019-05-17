@@ -72,6 +72,7 @@ layui.use([ 'jquery', 'form', 'layer', 'eleTree' ], function() {
 				// 获取全部节点
 				case method_name_getNodes:
 					msg_getNodes(msgData);
+					layer.close(index);
 					break;
 				// 获取节点值
 				case method_name_getNodesData:
@@ -90,7 +91,6 @@ layui.use([ 'jquery', 'form', 'layer', 'eleTree' ], function() {
 					msg_export(msgData);
 					break;
 				}
-				layer.close(index);
 			}
 		}
 	}

@@ -110,7 +110,7 @@ public class ZookeeperServer {
 	public String getNodeData(String path) {
 		try {
 			this.zookeeper.exists(path, new MyWatcher(this.zkurl));
-			return new String(this.zookeeper.getData(path, false, null));
+			return new String(this.zookeeper.getData(path, false, null), "utf-8");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
