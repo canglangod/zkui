@@ -1,0 +1,11 @@
+var method_name_init = 'Initialization complete';
+var method_name_close = 'close';
+var method_name_getNodes = 'getNodes';
+var method_name_getNodesData = 'getNodesData';
+var method_name_updateNodesData = 'updateNodesData';
+var method_name_addNodes = 'addNodes';
+var method_name_delNodes = 'delNodes';
+var method_name_export = 'export';
+var method_name_import = 'import';
+var method_name_create = "NodeCreated";
+var method_name_delete = "NodeDeleted";

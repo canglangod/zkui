@@ -34,6 +34,14 @@ public class WebSocketServer {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	public void sendMessage(String message) {
+		try {
+			this.session.getBasicRemote().sendText(message);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	@OnOpen
 	public void onOpen(Session session, @PathParam("zkurl") String zkurl) {
 		try {
@@ -49,9 +57,12 @@ public class WebSocketServer {
 
 			if (null != this.zookeeperServer.zookeeper) {
 				ZkConstants.webSocketSet.add(this);
+				JSONObject json = new JSONObject();
+				json.put("type", "Initialization complete");
+				this.sendMessage(json.toJSONString());
 				this.logger.info("socket on {}", this.key);
 			} else {
-				session.close();
+				this.msgClose();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -61,7 +72,6 @@ public class WebSocketServer {
 	@OnClose
 	public void onClose() {
 		try {
-			this.logger.info("socket off {}", this.key);
 			ZkConstants.webSocketSet.remove(this);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -70,71 +80,122 @@ public class WebSocketServer {
 
 	@OnMessage
 	public void onMessage(Session session, String message) {
+		logger.info("onMessage|onMessage:{}", message);
 		try {
-			logger.info("onMessage|onMessage:{}", message);
 			JSONObject json = JSONObject.parseObject(message);
-
 			String type = json.getString("type");
-			String path = json.getString("data");
-
-			List<NodeBean> children;
-			String nodeData;
-			String val;
-			String id;
 
 			switch (type) {
-			case ZkConstants.ZOOKEEPER_GET_NODES:
-				children = this.zookeeperServer.getChildren(path);
-
-				json.put("data", children);
-				this.sendMessage(json.toJSONString());
-				break;
 			case ZkConstants.ZOOKEEPER_CLOST:
-				session.close();
+				this.msgClose();
+				break;
+			case ZkConstants.ZOOKEEPER_GET_NODES:
+				this.msgGetNodes(json);
 				break;
 			case ZkConstants.ZOOKEEPER_GET_NODES_DATA:
-				nodeData = this.zookeeperServer.getNodeData(path);
-				json.put("id", path);
-				json.put("data", nodeData);
-				this.sendMessage(json.toJSONString());
+				this.msgGetNodesData(json);
 				break;
 			case ZkConstants.ZOOKEEPER_UPDATE_NODES_DATA:
-				val = json.getString("val");
-				this.zookeeperServer.updNodeData(path, val);
-
-				nodeData = this.zookeeperServer.getNodeData(path);
-				json.put("id", path);
-				json.put("data", nodeData);
-				json.put("type", ZkConstants.ZOOKEEPER_GET_NODES_DATA);
-				this.sendMessage(json.toJSONString());
+				this.msgUpdateNodesData(json);
 				break;
 			case ZkConstants.ZOOKEEPER_ADD_NODES:
-				id = json.getString("id");
-				val = json.getString("val");
-				this.zookeeperServer.addNode(path, id, val);
+				this.msgAddNodes(json);
 				break;
 			case ZkConstants.ZOOKEEPER_DEL_NODES:
-				this.zookeeperServer.delNode(path);
+				this.msgDelNodes(json);
 				break;
 			case ZkConstants.ZOOKEEPER_EXPORT:
-				children = this.zookeeperServer.getChildren(path);
-				List<Map<String, Object>> nodes = this.zookeeperServer.exportNodeToJson(children);
-				json.put("nodes", nodes);
-				this.sendMessage(json.toJSONString());
+				this.msgExport(json);
 				break;
 			case ZkConstants.ZOOKEEPER_IMPORT:
-				String node = json.getString("node");
-				this.zookeeperServer.importNode(path, JSONArray.parseArray(node));
+				this.msgImport(json);
 				break;
 			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			this.msgClose();
+		}
+	}
+
+	private void msgImport(JSONObject json) {
+		try {
+			String path = json.getString("path");
+			String data = json.getString("data");
+			this.zookeeperServer.importNode(path, JSONArray.parseArray(data));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void sendMessage(String message) {
+	private void msgExport(JSONObject json) {
 		try {
-			this.session.getBasicRemote().sendText(message);
+			String path = json.getString("path");
+			List<NodeBean> children = this.zookeeperServer.getChildren(path);
+			List<Map<String, Object>> nodes = this.zookeeperServer.exportNodeToJson(children);
+			json.put("data", nodes);
+			this.sendMessage(json.toJSONString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void msgDelNodes(JSONObject json) {
+		try {
+			String path = json.getString("path");
+			this.zookeeperServer.delNode(path);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void msgAddNodes(JSONObject json) {
+		try {
+			String id = json.getString("id");
+			String path = json.getString("path");
+			String data = json.getString("data");
+			this.zookeeperServer.addNode(path, id, data);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void msgUpdateNodesData(JSONObject json) {
+		try {
+			String path = json.getString("path");
+			String data = json.getString("data");
+			this.zookeeperServer.updNodeData(path, data);
+			json.put("data", this.zookeeperServer.getNodeData(path));
+			this.sendMessage(json.toJSONString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void msgGetNodesData(JSONObject json) {
+		try {
+			String path = json.getString("path");
+			json.put("data", this.zookeeperServer.getNodeData(path));
+			this.sendMessage(json.toJSONString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void msgClose() {
+		try {
+			session.close();
+			this.logger.info("socket off {}", this.key);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void msgGetNodes(JSONObject json) {
+		try {
+			String path = json.getString("path");
+			json.put("data", this.zookeeperServer.getChildren(path));
+			this.sendMessage(json.toJSONString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -142,7 +203,6 @@ public class WebSocketServer {
 
 	private ZookeeperServer getZookeeperServer(String zkurl) {
 		ZookeeperServer zookeeperServer = null;
-
 		Iterator<ZookeeperServer> iterator = ZkConstants.zookeeperSet.iterator();
 		while (iterator.hasNext()) {
 			zookeeperServer = iterator.next();
@@ -152,4 +212,5 @@ public class WebSocketServer {
 		}
 		return zookeeperServer;
 	}
+
 }

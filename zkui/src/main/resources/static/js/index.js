@@ -1,35 +1,38 @@
-layui.extend({
-	eleTree : '/zkui/static/layui/lay/mymodules/eleTree'
-});
-
-layui.use([ 'jquery', 'form', 'eleTree', 'layer' ], function() {
+/**
+ * 首页控制器
+ * 
+ * @author mengpp
+ * @date 2019年5月17日11:57:32
+ */
+layui.use([ 'jquery', 'form', 'layer' ], function() {
 	var $ = layui.jquery;
 	var form = layui.form;
 	var layer = layui.layer;
-	var eleTree = layui.eleTree;
 
+	/**
+	 * 登录
+	 */
 	form.on('submit(login)', function(data) {
 		var url = window.document.location.href;
-		var zkurl = data.field.zkurl;
 		var path = data.field.path;
+		var zkurl = data.field.zkurl;
 
 		url = url + "websocket/" + zkurl;
-
-		webSocket(url, path);
+		socket_link(url, path);
 		return false;
 	});
 
+	/**
+	 * 退出
+	 */
 	form.on('submit(close)', function(data) {
 		socket_close();
 		return false;
 	});
 
-	eleTree.on("nodeClick(zoopeekerNode)", function(d) {
-		if (d.data.currentData.children == null) {
-			socket_getNodesData(d.data.currentData.id);
-		}
-	});
-
+	/**
+	 * 修改节点值
+	 */
 	form.on('submit(updateVal)', function(data) {
 		var id = data.field.id;
 		var val = data.field.val;

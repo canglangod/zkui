@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.mengpp.zkui.constants.ZkConstants;
 import com.mengpp.zkui.server.WebSocketServer;
+import com.mengpp.zkui.server.ZookeeperServer;
 
 public class MyWatcher implements Watcher {
 
@@ -55,6 +56,8 @@ public class MyWatcher implements Watcher {
 			default:
 				break;
 			}
+		} else if (keeperState.equals(KeeperState.Disconnected)) {
+			this.close();
 		}
 	}
 
@@ -64,6 +67,23 @@ public class MyWatcher implements Watcher {
 			WebSocketServer webSocketServer = iterator.next();
 			if (this.zkurl.equals(webSocketServer.zookeeperServer.zkurl)) {
 				webSocketServer.sendMessage(msg);
+			}
+		}
+	}
+
+	private void close() {
+		Iterator<WebSocketServer> iterator = ZkConstants.webSocketSet.iterator();
+		while (iterator.hasNext()) {
+			WebSocketServer webSocketServer = iterator.next();
+			ZookeeperServer zookeeperServer = webSocketServer.zookeeperServer;
+			if (this.zkurl.equals(zookeeperServer.zkurl)) {
+				try {
+					webSocketServer.session.close();
+					zookeeperServer.zookeeper.close();
+					ZkConstants.zookeeperSet.remove(zookeeperServer);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

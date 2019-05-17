@@ -45,7 +45,7 @@
 			var $ = layui.jquery;
 			var form = layui.form;
 			var layer = layui.layerl;
-
+			
 			var superiorPath = [[${path}]];
 
 			form.on('submit(add)', function(data) {
@@ -61,7 +61,7 @@
 			form.verify({
 				path : [ /^[\S]{1,50}$/, '节点不能为空，且不能出现空格' ]
 			});
-
+			
 			form.val('add', {
 				superiorPath : superiorPath
 			});

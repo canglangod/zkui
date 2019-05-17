@@ -35,10 +35,14 @@
 	</div>
 	<script th:inline="javascript">
 		layui.use([ 'jquery', 'form', 'layer' ], function() {
-			var layer = layui.layer, form = layui.form, $ = layui.jquery;
+			var layer = layui.layer;
+			var form = layui.form;
+			var $ = layui.jquery;
+
+			var path = [[${path}]];
 
 			form.val('node', {
-				'superiorPath' : [[${path}]]
+				'superiorPath' : path
 			});
 
 			form.on('submit(add)', function(data) {

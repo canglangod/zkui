@@ -37,14 +37,12 @@
 			var form = layui.form;
 			var path = [[${path}]];
 			
-			var index = layer.load(2);
 			window.parent.socket_export(path);
 			window.serFromVal = function(path, node) {
 				form.val('node', {
 					'superiorPath' : path,
 					'node' : JSON.stringify(node)
 				});
-				layer.close(index);
 			}
 		});
 	</script>

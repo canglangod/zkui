@@ -22,7 +22,6 @@
 								</div>
 							</div>
 							<button class="layui-btn" lay-submit="" lay-filter="del">删除</button>
-							<button class="layui-btn" lay-submit="" lay-filter="cancel">取消</button>
 						</form>
 					</div>
 				</div>
@@ -37,13 +36,8 @@
 
 			form.on('submit(del)', function(data) {
 				var path = data.field.superiorPath;
-				
+
 				window.parent.socket_delNodes(path);
-				parent.layer.close(parent.layer.getFrameIndex(window.name));
-				return false;
-			});
-			
-			form.on('submit(cancel)', function(data) {
 				parent.layer.close(parent.layer.getFrameIndex(window.name));
 				return false;
 			});
