@@ -112,7 +112,7 @@ public class ZookeeperServer {
 			this.zookeeper.exists(path, new MyWatcher(this.zkurl));
 			byte[] data = this.zookeeper.getData(path, false, null);
 			if (null != data) {
-				new String(data);
+				return new String(data);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
