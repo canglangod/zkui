@@ -110,7 +110,10 @@ public class ZookeeperServer {
 	public String getNodeData(String path) {
 		try {
 			this.zookeeper.exists(path, new MyWatcher(this.zkurl));
-			return new String(this.zookeeper.getData(path, false, null));
+			byte[] data = this.zookeeper.getData(path, false, null);
+			if (null != data) {
+				new String(data);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
