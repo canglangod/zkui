@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>ZKUI</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" th:href="@{/static/layui/css/layui.css}">
+<link rel="stylesheet" th:href="@{/static/layui/css/mymodules/eleTree.css}">
+<link rel="stylesheet" th:href="@{/static/css/index.css}">
+<script th:src="@{/static/layui/layui.js}"></script>
+<script th:src="@{/static/js/index.js}"></script>
+<script th:src="@{/static/js/methodName.js}"></script>
+<script th:src="@{/static/js/socketConfig.js}"></script>
+</head>
+<body style="background-color: #F2F2F2;">
+	<div style="padding: 20px;">
+		<div class="layui-row layui-col-space15">
+			<div class="layui-col-md12">
+				<div class="layui-card">
+					<div class="layui-card-header">链接</div>
+					<div class="layui-card-body">
+						<form class="layui-form layui-form-pane" action="">
+							<div class="layui-form-item">
+								<label class="layui-form-label">url</label>
+								<div class="layui-input-inline">
+									<input type="text" name="zkurl" value="127.0.0.1:2181" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+								</div>
+								<label class="layui-form-label">监控路径</label>
+								<div class="layui-input-inline">
+									<input type="text" name="path" value="" placeholder="监控路径" autocomplete="off" class="layui-input">
+								</div>
+								<div class="layui-input-inline">
+									<button class="layui-btn layui-btn-normal" lay-submit="" lay-filter="login">链接</button>
+									<button class="layui-btn layui-btn-danger" lay-submit="" lay-filter="close">断开</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="layui-row layui-col-space15">
+			<div class="layui-col-md6">
+				<div class="layui-card">
+					<div class="layui-card-header">节点</div>
+					<div class="layui-card-body layui-card-body-max">
+						<div lay-filter="zoopeekerNode" class="eleTree zoopeekerNode"></div>
+					</div>
+				</div>
+			</div>
+			<div class="layui-col-md6">
+				<div class="layui-card">
+					<div class="layui-card-header">节点值</div>
+					<div class="layui-card-body layui-card-body-max">
+						<form class="layui-form layui-form-pane" lay-filter="nodeInfo" action="">
+							<div class="layui-form-item">
+								<label class="layui-form-label">节点名</label>
+								<div class="layui-input-block">
+									<input type="text" name="label" lay-verify="title" autocomplete="off" class="layui-input layui-disabled" disabled>
+								</div>
+							</div>
+							<div class="layui-form-item layui-form-text">
+								<label class="layui-form-label">节点值</label>
+								<div class="layui-input-block">
+									<textarea name="val" class="layui-textarea"></textarea>
+								</div>
+							</div>
+							<button class="layui-btn" lay-submit="" lay-filter="updateVal">立即修改</button>
+							<div class="layui-hide">
+								<input type="text" name="id" >
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
