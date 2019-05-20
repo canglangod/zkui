@@ -29,7 +29,6 @@ layui.use([ 'jquery', 'form', 'layer', 'eleTree' ], function() {
 		if (typeof (WebSocket) == "undefined") {
 			layer.msg('您的浏览器不支持WebSocket');
 		} else {
-			index = layer.load(2);
 
 			if (undefined == socket) {
 				socket = new WebSocket((url).replace("http", "ws"));
@@ -68,6 +67,7 @@ layui.use([ 'jquery', 'form', 'layer', 'eleTree' ], function() {
 				// 初始化完成
 				case method_name_init:
 					socket_getNodes(path);
+					index = layer.load(2);
 					break;
 				// 获取全部节点
 				case method_name_getNodes:
@@ -147,6 +147,8 @@ layui.use([ 'jquery', 'form', 'layer', 'eleTree' ], function() {
 		var layerOpenIndex = getLayerOpenIndex();
 		var iframe = window['layui-layer-iframe' + layerOpenIndex];
 		iframe.serFromVal(path, data);
+		
+		layer.close(index);
 	}
 
 	/**
@@ -241,6 +243,7 @@ layui.use([ 'jquery', 'form', 'layer', 'eleTree' ], function() {
 			'path' : path
 		}
 		socket_send(JSON.stringify(param));
+		index = layer.load(2);
 	};
 
 	/**

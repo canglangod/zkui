@@ -208,6 +208,8 @@ public class WebSocketServer {
 			zookeeperServer = iterator.next();
 			if (zkurl.equals(zookeeperServer.zkurl)) {
 				break;
+			} else {
+				zookeeperServer = null;
 			}
 		}
 		return zookeeperServer;

@@ -1101,6 +1101,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                 	layer.open({
                 		type: 2,
                 		title: '添加',
+                		resize: false,
                 		area: ['700px', '450px'],
                 		content: '/zkui/toAdd?path=' + path,
                 		success: function (layero, index) {
@@ -1115,6 +1116,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                 	layer.open({
                 		type: 2,
                 		title: '删除',
+                		resize: false,
                 		area: ['700px', '250px'],
                 		content: '/zkui/toDel?path=' + path,
                 		success: function (layero, index) {
@@ -1129,6 +1131,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                 	layer.open({
                 		type: 2,
                 		title: '导入',
+                		resize: false,
                 		area: ['700px', '350px'],
                 		content: '/zkui/toImport?path=' + path,
                 		success: function (layero, index) {
@@ -1143,6 +1146,7 @@ layui.define(["jquery","laytpl"], function (exports) {
                 	layer.open({
                 		type: 2,
                 		title: '导出',
+                		resize: false,
                 		area: ['700px', '350px'],
                 		content: '/zkui/toExport?path=' + path,
                 		success: function (layero, index) {
