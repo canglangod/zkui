@@ -80,7 +80,7 @@ public class WebSocketServer {
 
 	@OnMessage
 	public void onMessage(Session session, String message) {
-		logger.info("onMessage|onMessage:{}", message);
+		logger.info("onMessage|message:{}", message);
 		try {
 			JSONObject json = JSONObject.parseObject(message);
 			String type = json.getString("type");
