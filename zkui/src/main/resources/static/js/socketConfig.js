@@ -32,6 +32,7 @@ layui.use([ 'jquery', 'form', 'layer', 'eleTree' ],
 				} else {
 					index = layer.load(2);
 					$('#login').addClass('layui-btn-disabled').attr('disabled', "true");
+					$('#close').removeClass('layui-btn-disabled').removeAttr('disabled',"true");
 
 					if (undefined == socket) {
 						socket = new WebSocket((url).replace("http", "ws"));
@@ -53,6 +54,8 @@ layui.use([ 'jquery', 'form', 'layer', 'eleTree' ],
 					 */
 					socket.onclose = function() {
 						$('#login').removeClass('layui-btn-disabled').removeAttr('disabled',"true");
+						$('#close').addClass('layui-btn-disabled').attr('disabled', "true");
+						
 						layer.msg('scoket 已断开');
 						socket = undefined;
 						el.reload(null);
