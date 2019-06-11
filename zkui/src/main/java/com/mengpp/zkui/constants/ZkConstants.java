@@ -11,19 +11,21 @@ public class ZkConstants {
 
 	public static CopyOnWriteArraySet<WebSocketServer> webSocketSet = new CopyOnWriteArraySet<WebSocketServer>();
 
-	public static final String ZOOKEEPER_GET_NODES = "getNodes";
+	public static final String ZOOKEEPER_GETNODES = "getNodes";
 
 	public static final String ZOOKEEPER_CLOST = "close";
 
-	public static final String ZOOKEEPER_GET_NODES_DATA = "getNodesData";
+	public static final String ZOOKEEPER_GETNODESDATA = "getNodesData";
 
-	public static final String ZOOKEEPER_UPDATE_NODES_DATA = "updateNodesData";
+	public static final String ZOOKEEPER_UPDATENODESDATA = "updateNodesData";
 
-	public static final String ZOOKEEPER_ADD_NODES = "addNodes";
+	public static final String ZOOKEEPER_ADDNODES = "addNodes";
 
-	public static final String ZOOKEEPER_DEL_NODES = "delNodes";
+	public static final String ZOOKEEPER_DELNODES = "delNodes";
 
 	public static final String ZOOKEEPER_EXPORT = "export";
 
 	public static final String ZOOKEEPER_IMPORT = "import";
+
+	public static final String ZOOKEEPER_INITAL = "Initialization complete";
 }
