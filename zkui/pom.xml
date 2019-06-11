@@ -50,16 +50,6 @@
 	</dependencies>
 
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<!--打包时排除掉资源文件 -->
-				<excludes>
-					<exclude>**/**</exclude>
-				</excludes>
-			</resource>
-		</resources>
-
 		<plugins>
 			<plugin>
 				<!--打包时去除第三方依赖 -->
