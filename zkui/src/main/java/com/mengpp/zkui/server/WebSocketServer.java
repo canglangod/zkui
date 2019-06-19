@@ -1,8 +1,6 @@
 package com.mengpp.zkui.server;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.websocket.OnClose;
@@ -12,63 +10,70 @@ import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.mengpp.zkui.bean.DataBean;
 import com.mengpp.zkui.bean.NodeBean;
 import com.mengpp.zkui.constants.ZkConstants;
 
+/**
+ * WebSocketServer websocket控制器
+ * 
+ * @author mengpp
+ * @date 2019年6月10日16:57:08
+ */
 @Component
 @ServerEndpoint("/websocket/{zkurl}")
 public class WebSocketServer {
 
+	/**
+	 * 唯一主键
+	 */
 	public String key;
 
+	/**
+	 * 连接信息
+	 */
 	public Session session;
 
+	/**
+	 * zookepper控制器
+	 */
 	public ZookeeperServer zookeeperServer;
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-	public void sendMessage(String message) {
-		try {
-			this.session.getBasicRemote().sendText(message);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
+	/**
+	 * socket建立连接
+	 * 
+	 * @param session 连接信息
+	 * @param zkurl   连接地址
+	 */
 	@OnOpen
 	public void onOpen(Session session, @PathParam("zkurl") String zkurl) {
 		try {
-			String key = DigestUtils.md5DigestAsHex((zkurl + UUID.randomUUID().toString()).getBytes());
-
-			this.key = key;
 			this.session = session;
+			this.zookeeperServer = new ZookeeperServer().inital(zkurl);
+			this.key = DigestUtils.md5DigestAsHex((zkurl + UUID.randomUUID().toString()).getBytes());
 
-			this.zookeeperServer = this.getZookeeperServer(zkurl);
-			if (null == this.zookeeperServer) {
-				this.zookeeperServer = new ZookeeperServer(zkurl);
-			}
-
-			if (null != this.zookeeperServer.zookeeper) {
+			if (null != this.zookeeperServer) {
 				ZkConstants.webSocketSet.add(this);
-				JSONObject json = new JSONObject();
-				json.put("type", "Initialization complete");
-				this.sendMessage(json.toJSONString());
-				this.logger.info("socket on {}", this.key);
+				DataBean dataBean = new DataBean();
+				dataBean.setType(ZkConstants.ZOOKEEPER_INITAL);
+
+				this.sendMessage(dataBean);
 			} else {
-				this.msgClose();
+				session.close();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * 关闭链接
+	 */
 	@OnClose
 	public void onClose() {
 		try {
@@ -78,141 +83,74 @@ public class WebSocketServer {
 		}
 	}
 
+	/**
+	 * 消息
+	 * 
+	 * @param session 连接信息
+	 * @param message 消息内容
+	 */
 	@OnMessage
 	public void onMessage(Session session, String message) {
-		logger.info("onMessage|message:{}", message);
 		try {
-			JSONObject json = JSONObject.parseObject(message);
-			String type = json.getString("type");
-
+			DataBean dataBean = JSON.toJavaObject(JSON.parseObject(message), DataBean.class);
+			String path = dataBean.getPath();
+			String type = dataBean.getType();
+			String data = String.valueOf(dataBean.getData());
 			switch (type) {
+			// 关闭链接
 			case ZkConstants.ZOOKEEPER_CLOST:
-				this.msgClose();
+				session.close();
+				return;
+			// 获取全部节点
+			case ZkConstants.ZOOKEEPER_GETNODES:
+				dataBean.setData(this.zookeeperServer.getChildren(path));
 				break;
-			case ZkConstants.ZOOKEEPER_GET_NODES:
-				this.msgGetNodes(json);
+			// 获取节点值
+			case ZkConstants.ZOOKEEPER_GETNODESDATA:
+				dataBean.setData(this.zookeeperServer.getNodeData(path));
 				break;
-			case ZkConstants.ZOOKEEPER_GET_NODES_DATA:
-				this.msgGetNodesData(json);
+			// 修改节点值
+			case ZkConstants.ZOOKEEPER_UPDATENODESDATA:
+				String jasypt = dataBean.getJasypt();
+				this.zookeeperServer.updNodeData(path, data, jasypt);
+				dataBean.setData(this.zookeeperServer.getNodeData(path));
+				dataBean.setType(ZkConstants.ZOOKEEPER_GETNODESDATA);
 				break;
-			case ZkConstants.ZOOKEEPER_UPDATE_NODES_DATA:
-				this.msgUpdateNodesData(json);
-				break;
-			case ZkConstants.ZOOKEEPER_ADD_NODES:
-				this.msgAddNodes(json);
-				break;
-			case ZkConstants.ZOOKEEPER_DEL_NODES:
-				this.msgDelNodes(json);
-				break;
+			// 添加节点
+			case ZkConstants.ZOOKEEPER_ADDNODES:
+				this.zookeeperServer.addNode(path, data);
+				return;
+			// 删除节点
+			case ZkConstants.ZOOKEEPER_DELNODES:
+				this.zookeeperServer.delNode(path);
+				return;
+			// 导出
 			case ZkConstants.ZOOKEEPER_EXPORT:
-				this.msgExport(json);
+				List<NodeBean> children = this.zookeeperServer.getChildren(path);
+				dataBean.setData(this.zookeeperServer.exportNodeToJson(children));
 				break;
+			// 导入
 			case ZkConstants.ZOOKEEPER_IMPORT:
-				this.msgImport(json);
-				break;
+				this.zookeeperServer.importNode(path, JSONArray.parseArray(data));
+				return;
 			}
-
+			this.sendMessage(dataBean);
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.msgClose();
 		}
 	}
 
-	private void msgImport(JSONObject json) {
+	/**
+	 * 发送消息
+	 * 
+	 * @param message 消息内容
+	 */
+	public void sendMessage(Object message) {
 		try {
-			String path = json.getString("path");
-			String data = json.getString("data");
-			this.zookeeperServer.importNode(path, JSONArray.parseArray(data));
+			this.session.getBasicRemote().sendText(JSON.toJSONString(message));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	private void msgExport(JSONObject json) {
-		try {
-			String path = json.getString("path");
-			List<NodeBean> children = this.zookeeperServer.getChildren(path);
-			List<Map<String, Object>> nodes = this.zookeeperServer.exportNodeToJson(children);
-			json.put("data", nodes);
-			this.sendMessage(json.toJSONString());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void msgDelNodes(JSONObject json) {
-		try {
-			String path = json.getString("path");
-			this.zookeeperServer.delNode(path);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void msgAddNodes(JSONObject json) {
-		try {
-			String id = json.getString("id");
-			String path = json.getString("path");
-			String data = json.getString("data");
-			this.zookeeperServer.addNode(path, id, data);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void msgUpdateNodesData(JSONObject json) {
-		try {
-			String path = json.getString("path");
-			String data = json.getString("data");
-			this.zookeeperServer.updNodeData(path, data);
-			json.put("data", this.zookeeperServer.getNodeData(path));
-			this.sendMessage(json.toJSONString());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void msgGetNodesData(JSONObject json) {
-		try {
-			String path = json.getString("path");
-			json.put("data", this.zookeeperServer.getNodeData(path));
-			this.sendMessage(json.toJSONString());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void msgClose() {
-		try {
-			session.close();
-			this.logger.info("socket off {}", this.key);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void msgGetNodes(JSONObject json) {
-		try {
-			String path = json.getString("path");
-			json.put("data", this.zookeeperServer.getChildren(path));
-			this.sendMessage(json.toJSONString());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private ZookeeperServer getZookeeperServer(String zkurl) {
-		ZookeeperServer zookeeperServer = null;
-		Iterator<ZookeeperServer> iterator = ZkConstants.zookeeperSet.iterator();
-		while (iterator.hasNext()) {
-			zookeeperServer = iterator.next();
-			if (zkurl.equals(zookeeperServer.zkurl)) {
-				break;
-			} else {
-				zookeeperServer = null;
-			}
-		}
-		return zookeeperServer;
 	}
 
 }

@@ -31,8 +31,10 @@ layui.use([ 'jquery', 'form', 'layer', 'eleTree' ],
 					layer.msg('您的浏览器不支持WebSocket');
 				} else {
 					index = layer.load(2);
-					$('#login').addClass('layui-btn-disabled').attr('disabled', "true");
-					$('#close').removeClass('layui-btn-disabled').removeAttr('disabled',"true");
+					$('#login').addClass('layui-btn-disabled').attr('disabled',
+							"true");
+					$('#close').removeClass('layui-btn-disabled').removeAttr(
+							'disabled', "true");
 
 					if (undefined == socket) {
 						socket = new WebSocket((url).replace("http", "ws"));
@@ -53,9 +55,11 @@ layui.use([ 'jquery', 'form', 'layer', 'eleTree' ],
 					 * socket关闭后执行
 					 */
 					socket.onclose = function() {
-						$('#login').removeClass('layui-btn-disabled').removeAttr('disabled',"true");
-						$('#close').addClass('layui-btn-disabled').attr('disabled', "true");
-						
+						$('#login').removeClass('layui-btn-disabled')
+								.removeAttr('disabled', "true");
+						$('#close').addClass('layui-btn-disabled').attr(
+								'disabled', "true");
+
 						layer.msg('scoket 已断开');
 						socket = undefined;
 						el.reload(null);
@@ -208,11 +212,12 @@ layui.use([ 'jquery', 'form', 'layer', 'eleTree' ],
 			/**
 			 * socket修改节点
 			 */
-			window.socket_updateNodesData = function(path, data) {
+			window.socket_updateNodesData = function(path, data, jasypt) {
 				var param = {
 					'type' : method_name_updateNodesData,
 					'path' : path,
-					'data' : data
+					'data' : data,
+					'jasypt' : jasypt
 				}
 				socket_send(JSON.stringify(param));
 			}
@@ -223,8 +228,7 @@ layui.use([ 'jquery', 'form', 'layer', 'eleTree' ],
 			window.socket_addNodes = function(path, id, data) {
 				var param = {
 					'type' : method_name_addNodes,
-					'id' : id,
-					'path' : path,
+					'path' : path + "/" + id,
 					'data' : data
 				}
 				socket_send(JSON.stringify(param));

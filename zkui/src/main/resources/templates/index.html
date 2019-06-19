@@ -59,6 +59,19 @@
 									<input type="text" name="label" lay-verify="title" autocomplete="off" class="layui-input layui-disabled" disabled>
 								</div>
 							</div>
+							<div class="layui-form-item" pane="">
+								<label class="layui-form-label">加密方式</label>
+								<div class="layui-input-block">
+									<input type="radio" lay-filter="passtype" name="passtype" value="no" title="无" checked>
+									<input type="radio" lay-filter="passtype" name="passtype" value="jasypt" title="Jasypt加密">
+								</div>
+							</div>
+							<div id="passId" class="layui-form-item layui-hide">
+								<label class="layui-form-label">密码</label>
+								<div class="layui-input-block">
+									<input type="text" name="jasypt" lay-verify="title" autocomplete="off" class="layui-input">
+								</div>
+							</div>
 							<div class="layui-form-item layui-form-text">
 								<label class="layui-form-label">节点值</label>
 								<div class="layui-input-block">
