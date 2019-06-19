@@ -212,11 +212,12 @@ layui.use([ 'jquery', 'form', 'layer', 'eleTree' ],
 			/**
 			 * socket修改节点
 			 */
-			window.socket_updateNodesData = function(path, data) {
+			window.socket_updateNodesData = function(path, data, jasypt) {
 				var param = {
 					'type' : method_name_updateNodesData,
 					'path' : path,
-					'data' : data
+					'data' : data,
+					'jasypt' : jasypt
 				}
 				socket_send(JSON.stringify(param));
 			}

@@ -111,8 +111,10 @@ public class WebSocketServer {
 				break;
 			// 修改节点值
 			case ZkConstants.ZOOKEEPER_UPDATENODESDATA:
-				this.zookeeperServer.updNodeData(path, data);
+				String jasypt = dataBean.getJasypt();
+				this.zookeeperServer.updNodeData(path, data, jasypt);
 				dataBean.setData(this.zookeeperServer.getNodeData(path));
+				dataBean.setType(ZkConstants.ZOOKEEPER_GETNODESDATA);
 				break;
 			// 添加节点
 			case ZkConstants.ZOOKEEPER_ADDNODES:

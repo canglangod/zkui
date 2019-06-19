@@ -33,6 +33,11 @@ public class DataBean {
 	 */
 	private String label;
 
+	/**
+	 * 加密密码
+	 */
+	private String jasypt;
+
 	public String getType() {
 		return type;
 	}
@@ -71,6 +76,14 @@ public class DataBean {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public String getJasypt() {
+		return jasypt;
+	}
+
+	public void setJasypt(String jasypt) {
+		this.jasypt = jasypt;
 	}
 
 }

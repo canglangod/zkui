@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.mengpp.zkui.bean.NodeBean;
 import com.mengpp.zkui.constants.ZkConstants;
 import com.mengpp.zkui.utils.MyWatcher;
+import com.mengpp.zkui.utils.SecretkeyGenerationUtil;
 
 /**
  * ZookeeperServer zookeeper控制器
@@ -131,12 +132,16 @@ public class ZookeeperServer {
 	/**
 	 * 修改节点值
 	 * 
-	 * @param path 节点
-	 * @param data 值
+	 * @param path   节点
+	 * @param data   值
+	 * @param jasypt 密码
 	 * @return
 	 */
-	public Boolean updNodeData(String path, String data) {
+	public Boolean updNodeData(String path, String data, String jasypt) {
 		try {
+			if (!StringUtils.isEmpty(jasypt)) {
+				data = SecretkeyGenerationUtil.encryption(data, jasypt);
+			}
 			this.zookeeper.setData(path, data.getBytes(), -1);
 		} catch (Exception e) {
 			e.printStackTrace();
