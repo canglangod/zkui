@@ -28,3 +28,7 @@ layui-v2.4.5
 ### v1.0.2
 
 - 修改节点值增加Jasypt加密方式
+
+# 捐赠支持：
+
+![捐赠支持](../../../../Software/Typora/assets/20190619151238.png){:width="200px" height:"300px"}
