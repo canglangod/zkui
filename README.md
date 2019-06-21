@@ -28,7 +28,3 @@ layui-v2.4.5
 ### v1.0.2
 
 - 修改节点值增加Jasypt加密方式
-
-# 捐赠支持：
-
-![捐赠支持](https://mengpp-test.oss-cn-hangzhou.aliyuncs.com/20190619151238.png)
