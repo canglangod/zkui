@@ -5,6 +5,12 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import com.mengpp.zkui.server.WebSocketServer;
 import com.mengpp.zkui.server.ZookeeperServer;
 
+/**
+ * zookeeper常量
+ * 
+ * @author mengpp
+ * @date 2019年6月24日09:45:20
+ */
 public class ZkConstants {
 
 	public static CopyOnWriteArraySet<ZookeeperServer> zookeeperSet = new CopyOnWriteArraySet<ZookeeperServer>();

@@ -12,6 +12,12 @@ import com.mengpp.zkui.bean.DataBean;
 import com.mengpp.zkui.constants.ZkConstants;
 import com.mengpp.zkui.server.WebSocketServer;
 
+/**
+ * MyWatcher zookeeper监听器
+ * 
+ * @author mengpp
+ * @date 2019年6月24日09:53:16
+ */
 public class MyWatcher implements Watcher {
 
 	private String zkurl;

@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * 拦截器
+ * InterceptorConfig 拦截器
  * 
  * @author mengpp
  * @date 2018年10月18日 10:19:50
