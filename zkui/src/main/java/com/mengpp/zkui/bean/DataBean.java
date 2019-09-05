@@ -1,7 +1,7 @@
 package com.mengpp.zkui.bean;
 
 /**
- * 返回参数对象
+ * DataBean 传输对象
  * 
  * @author mengpp
  * @date 2019年6月11日09:11:49
@@ -9,32 +9,32 @@ package com.mengpp.zkui.bean;
 public class DataBean {
 
 	/**
-	 * 类型
+	 * type 类型
 	 */
 	private String type;
 
 	/**
-	 * 地址
+	 * path 地址
 	 */
 	private String path;
 
 	/**
-	 * 数据
+	 * data 数据
 	 */
 	private Object data;
 
 	/**
-	 * id
+	 * id id
 	 */
 	private String id;
 
 	/**
-	 * 标签
+	 * label 标签
 	 */
 	private String label;
 
 	/**
-	 * 加密密码
+	 * jasypt 加密密码
 	 */
 	private String jasypt;
 

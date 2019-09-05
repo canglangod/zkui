@@ -2,20 +2,26 @@ package com.mengpp.zkui.bean;
 
 import java.util.List;
 
+/**
+ * NodeBean 节点对象
+ * 
+ * @author mengpp
+ * @date 2019年6月24日09:45:55
+ */
 public class NodeBean {
 
 	/**
-	 * ID
+	 * id id
 	 */
 	public String id;
 
 	/**
-	 * 名称
+	 * label 名称
 	 */
 	public String label;
 
 	/**
-	 * 子节点
+	 * children 子节点
 	 */
 	public List<NodeBean> children;
 
